@@ -19,9 +19,11 @@ $ composer require rayrutjes/domain-foundation-example-silly
 Update your database credentials into RayRutjes\DomainFoundation\Example\Application.
 *Actually, we have only tested MySQL*
 
+Create your database.
+
 Set up your event store schema:
 ```bash
-$ php src/Interfaces/Cli/app-install-command.php
+$ php src/Interfaces/Cli/app.php app:install
 ```
 
 Run Commands
