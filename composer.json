@@ -1,0 +1,26 @@
+{
+    "name": "rayrutjes/domain-foundation-example-silly",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "RayRutjes",
+            "email": "raymond.rutjes@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "rayrutjes/domain-foundation": "^0.2.0",
+        "mnapoli/silly": "^1.1"
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url":  "git@github.com:RayRutjes/domain-foundation.git"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "RayRutjes\\DomainFoundation\\Example\\": "src/"
+        }
+    }
+}
