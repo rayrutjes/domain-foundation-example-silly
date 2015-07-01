@@ -1,7 +1,7 @@
 Event Sourcing Example Based On Silly
 -------------------------------------
 
-Please discover in this package a very simple application which illustrates the use of 
+Please discover in this package a very simple application which illustrates the use of
 the [rayrutjes/domain-foundation](https://github.com/RayRutjes/domain-foundation) library.
 
 We will enhance this example along the road, feel free to suggest features that would illustrate
@@ -16,7 +16,7 @@ Install via composer
 $ composer require rayrutjes/domain-foundation-example-silly
 ```
 
-Update your database credentials into RayRutjes\DomainFoundation\Example\Application.
+Update your database credentials into `src/Interfaces/bootstrap.php`.
 *Actually, we have only tested MySQL*
 
 Create your database.

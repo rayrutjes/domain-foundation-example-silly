@@ -58,10 +58,10 @@ final class Application
      *
      * @return Application
      */
-    public static function instance()
+    public static function instance($server, $port, $databaseName, $username, $password)
     {
         if (null === self::$instance) {
-            self::$instance = new self();
+            self::$instance = new self($server, $port, $databaseName, $username, $password);
         }
 
         return self::$instance;
@@ -70,9 +70,9 @@ final class Application
     /**
      * Bootstrap the application.
      */
-    private function __construct()
+    private function __construct($server, $port, $databaseName, $username, $password)
     {
-        $this->initializePdoConnection();
+        $this->initializePdoConnection($server, $port, $databaseName, $username, $password);
         $this->initializeCommandGateway();
         $this->registerUserCommands();
     }
@@ -120,9 +120,9 @@ final class Application
         );
     }
 
-    private function initializePdoConnection()
+    private function initializePdoConnection($server, $port, $databaseName, $username, $password)
     {
-        $this->pdo = new \PDO('mysql:host=localhost;dbname=domainfoundation;port=8889', 'root', 'root');
+        $this->pdo = new \PDO(sprintf('mysql:host=%s;dbname=%s;port=%d', $server, $databaseName, $port), $username, $password);
         $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
     }
 
