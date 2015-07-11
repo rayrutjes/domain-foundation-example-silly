@@ -7,9 +7,8 @@
             "email": "raymond.rutjes@gmail.com"
         }
     ],
-    "minimum-stability": "dev",
     "require": {
-        "rayrutjes/domain-foundation": "^0.2.0",
+        "rayrutjes/domain-foundation": "0.3.0",
         "mnapoli/silly": "^1.1"
     },
     "repositories": [
@@ -22,5 +21,7 @@
         "psr-4": {
             "RayRutjes\\DomainFoundation\\Example\\": "src/"
         }
-    }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }

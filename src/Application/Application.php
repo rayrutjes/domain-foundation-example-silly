@@ -3,12 +3,10 @@
 namespace RayRutjes\DomainFoundation\Example\Application;
 
 use RayRutjes\DomainFoundation\Command\Bus\SimpleCommandBus;
-use RayRutjes\DomainFoundation\Command\Factory\GenericCommandFactory;
 use RayRutjes\DomainFoundation\Command\Gateway\CommandGateway;
 use RayRutjes\DomainFoundation\Command\Gateway\DefaultCommandGateway;
 use RayRutjes\DomainFoundation\Command\Handler\Registry\CommandHandlerRegistry;
 use RayRutjes\DomainFoundation\Command\Handler\Registry\InMemoryCommandHandlerRegistry;
-use RayRutjes\DomainFoundation\Contract\ConventionalContractFactory;
 use RayRutjes\DomainFoundation\EventBus\SimpleEventBus;
 use RayRutjes\DomainFoundation\Example\Application\Identity\Command\ChangeUsernameCommand;
 use RayRutjes\DomainFoundation\Example\Application\Identity\Command\ChangeUsernameCommandHandler;
@@ -16,13 +14,13 @@ use RayRutjes\DomainFoundation\Example\Application\Identity\Command\ChangeUserPa
 use RayRutjes\DomainFoundation\Example\Application\Identity\Command\ChangeUserPasswordCommandHandler;
 use RayRutjes\DomainFoundation\Example\Application\Identity\Command\RegisterUserCommand;
 use RayRutjes\DomainFoundation\Example\Application\Identity\Command\RegisterUserCommandHandler;
+use RayRutjes\DomainFoundation\Example\Application\Identity\Projection\ClaimedUsernamesProjection;
 use RayRutjes\DomainFoundation\Example\Domain\Identity\RegisterUserService;
 use RayRutjes\DomainFoundation\Example\Infrastructure\Identity\BcryptPasswordHashingService;
 use RayRutjes\DomainFoundation\Example\Infrastructure\Persistence\PdoUserRepository;
-use RayRutjes\DomainFoundation\Message\Identifier\Factory\UuidMessageIdentifierFactory;
 use RayRutjes\DomainFoundation\Persistence\Pdo\EventStore\PdoEventStore;
 use RayRutjes\DomainFoundation\Persistence\Pdo\UnitOfWork\PdoTransactionManager;
-use RayRutjes\DomainFoundation\UnitOfWork\Factory\DefaultUnitOfWorkFactory;
+use RayRutjes\DomainFoundation\UnitOfWork\DefaultUnitOfWork;
 use RayRutjes\DomainFoundation\UnitOfWork\UnitOfWork;
 
 final class Application
@@ -118,6 +116,9 @@ final class Application
             ChangeUserPasswordCommand::class,
             new ChangeUserPasswordCommandHandler($userRepository, $passwordHashingService)
         );
+
+        $claimedUsernamesProjection = new ClaimedUsernamesProjection($this->pdo);
+        $simpleEventBus->subscribe($claimedUsernamesProjection);
     }
 
     private function initializePdoConnection($server, $port, $databaseName, $username, $password)
@@ -128,16 +129,17 @@ final class Application
 
     private function initializeCommandGateway()
     {
-        $this->commandHandlerRegistry = new InMemoryCommandHandlerRegistry();
-
         $transactionManager = new PdoTransactionManager($this->pdo);
-        $unitOfWorkFactory = new DefaultUnitOfWorkFactory($transactionManager);
 
+        $this->commandHandlerRegistry = new InMemoryCommandHandlerRegistry();
+        $this->unitOfWork = new DefaultUnitOfWork($transactionManager);
 
-        $this->unitOfWork = $unitOfWorkFactory->createUnitOfWork();
         $commandBus = new SimpleCommandBus($this->commandHandlerRegistry, $this->unitOfWork);
+        $this->commandGateway = new DefaultCommandGateway($commandBus);
+    }
 
-        $commandFactory = new GenericCommandFactory(new ConventionalContractFactory(), new UuidMessageIdentifierFactory());
-        $this->commandGateway = new DefaultCommandGateway($commandBus, $commandFactory);
+    public function pdo()
+    {
+        return $this->pdo;
     }
 }

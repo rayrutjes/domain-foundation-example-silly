@@ -2,14 +2,13 @@
 
 namespace RayRutjes\DomainFoundation\Example\Infrastructure\Persistence;
 
-use RayRutjes\DomainFoundation\Contract\ConventionalContractFactory;
+use RayRutjes\DomainFoundation\Contract\Contract;
 use RayRutjes\DomainFoundation\EventBus\EventBus;
 use RayRutjes\DomainFoundation\Example\Domain\Identity\User;
 use RayRutjes\DomainFoundation\Example\Domain\Identity\UserIdentifier;
 use RayRutjes\DomainFoundation\Example\Domain\Identity\UserRepository;
 use RayRutjes\DomainFoundation\Persistence\Pdo\EventStore\PdoEventStore;
 use RayRutjes\DomainFoundation\Repository\AggregateRootRepository;
-use RayRutjes\DomainFoundation\Repository\AggregateRootRepositoryFactory;
 use RayRutjes\DomainFoundation\UnitOfWork\UnitOfWork;
 
 final class PdoUserRepository implements UserRepository
@@ -28,11 +27,9 @@ final class PdoUserRepository implements UserRepository
     {
         $eventStore = new PdoEventStore($pdo);
 
-        $contractFactory = new ConventionalContractFactory();
-        $aggregateRootType = $contractFactory->createFromClassName(User::class);
+        $aggregateRootType = Contract::createFromClassName(User::class);
 
-        $repositoryFactory = new AggregateRootRepositoryFactory($eventStore, $eventBus);
-        $this->repository = $repositoryFactory->create($unitOfWork, $aggregateRootType);
+        $this->repository = new AggregateRootRepository($unitOfWork, $aggregateRootType, $eventStore, $eventBus);
     }
 
     /**
