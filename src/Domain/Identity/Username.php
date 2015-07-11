@@ -2,9 +2,7 @@
 
 namespace RayRutjes\DomainFoundation\Example\Domain\Identity;
 
-use RayRutjes\DomainFoundation\ValueObject\ValueObject;
-
-final class Username implements ValueObject
+final class Username
 {
     /**
      * @var string
@@ -23,16 +21,12 @@ final class Username implements ValueObject
     }
 
     /**
-     * @param ValueObject $other
+     * @param Username $other
      *
      * @return bool
      */
-    public function sameValueAs(ValueObject $other)
+    public function sameValueAs(Username $other)
     {
-        if (!$other instanceof self) {
-            return false;
-        }
-
         return $this->toString() === $other->toString();
     }
 
@@ -42,5 +36,13 @@ final class Username implements ValueObject
     public function toString()
     {
         return $this->value;
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->toString();
     }
 }
